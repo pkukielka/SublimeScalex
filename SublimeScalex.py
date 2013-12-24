@@ -7,9 +7,19 @@ import json
 class SublimeScalexCommand(sublime_plugin.WindowCommand):
 
   def run(self):
-    self.window.show_input_panel('Find function:', '', self.__queryScalex, None, None)
+    view = self.window.show_input_panel(
+      'Find function:',
+      SublimeScalexHistory.current(),
+      self.__queryScalex,
+      None,
+      None)
+    view.set_syntax_file('Packages/SublimeScalex/SublimeScalex.hidden-tmLanguage')
+    view.settings().set('is_widget', True)
+    view.settings().set('gutter', False)
+    view.settings().set('rulers', [])
 
   def __queryScalex(self, query_string):
+    SublimeScalexHistory.add(query_string)
     settings = sublime.load_settings("SublimeScalex.sublime-settings")
     queryThread = QueryScalex(
       settings.get("scalex_api_url"),
@@ -26,6 +36,30 @@ class SublimeScalexCommand(sublime_plugin.WindowCommand):
   def __openInBrowser(self, index):
     if (index >= 0):
       webbrowser.open_new_tab(self.urls[index])
+
+
+class SublimeScalexHistory(sublime_plugin.TextCommand):
+  index = 0
+  history = ['']
+
+  @classmethod
+  def current(cls):
+    return cls.history[cls.index]
+
+  @classmethod
+  def add(cls, new_query):
+    if cls.history[-1] != new_query:
+      cls.history.append(new_query)
+      cls.index = len(cls.history) - 1
+
+  def run(self, edit, backwards=False):
+    print(self.index)
+    self.index += -1 if backwards else 1
+    if self.index == len(self.history) or self.index < -len(self.history):
+      self.index = -1 if backwards else 0
+
+    self.view.erase(edit, sublime.Region(0, self.view.size()))
+    self.view.insert(edit, 0, self.history[self.index])
 
 
 class QueryScalex(threading.Thread):

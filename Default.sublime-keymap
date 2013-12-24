@@ -1,0 +1,20 @@
+[
+    {
+        "keys": ["up"], "command": "sublime_scalex_history",
+        "args": {
+            "backwards": true
+        },
+        "context":
+        [
+            { "key": "selector", "operator": "equal", "operand": "text.sublimescalex" }
+        ]
+    },
+
+    {
+        "keys": ["down"], "command": "sublime_scalex_history",
+        "context":
+        [
+            { "key": "selector", "operator": "equal", "operand": "text.sublimescalex" }
+        ]
+    }
+]
