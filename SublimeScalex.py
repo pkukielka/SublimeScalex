@@ -20,13 +20,14 @@ class SublimeScalexCommand(sublime_plugin.WindowCommand):
 
   def __queryScalex(self, query_string):
     SublimeScalexHistory.add(query_string)
-    settings = sublime.load_settings("SublimeScalex.sublime-settings")
+    settings = sublime.load_settings('SublimeScalex.sublime-settings')
     queryThread = QueryScalex(
-      settings.get("scalex_api_url"),
+      settings.get('scalex_api_url'),
+      settings.get('scaladoc_url'),
       query_string,
       self.__displayRecords,
-      settings.get("scalex_api_timeout"),
-      settings.get("results_limit"))
+      settings.get('scalex_api_timeout'),
+      settings.get('results_limit'))
     queryThread.start()
 
   def __displayRecords(self, records, urls):
@@ -53,7 +54,6 @@ class SublimeScalexHistory(sublime_plugin.TextCommand):
       cls.index = len(cls.history) - 1
 
   def run(self, edit, backwards=False):
-    print(self.index)
     self.index += -1 if backwards else 1
     if self.index == len(self.history) or self.index < -len(self.history):
       self.index = -1 if backwards else 0
@@ -63,10 +63,11 @@ class SublimeScalexHistory(sublime_plugin.TextCommand):
 
 
 class QueryScalex(threading.Thread):
-  def __init__(self, scalex_url, query_string, response_callback, timeout, limit):
+  def __init__(self, scalex_url, scaladoc_url, query_string, response_callback, timeout, limit):
     self.limit = limit
     self.timeout = timeout
     self.scalex_url = scalex_url
+    self.scaladoc_url = scaladoc_url
     self.query_string = query_string
     self.response_callback = response_callback
     threading.Thread.__init__(self)
@@ -88,24 +89,20 @@ class QueryScalex(threading.Thread):
     return [[self.__parseSignature(record),
             self.__parsePackage(record),
             self.__parseComment(record)]
-            for record in json_response["results"]]
+            for record in json_response['results']]
 
   def __prepareUrlsList(self, json_response):
-    return [self.__parseUrl(record)
-            for record in json_response["results"]]
-
-  def __parseUrl(self, record):
-    try: return record["docUrl"]
-    except KeyError: return ""
+    return [self.scaladoc_url + '#' + self.__parsePackage(record)
+            for record in json_response['results']]
 
   def __parseComment(self, record):
-    try: return record["comment"]["short"]["txt"]
-    except KeyError: return ""
+    try: return record['comment']['short']['txt']
+    except KeyError: return ''
 
   def __parseSignature(self, record):
-    try: return 'def ' + record["name"] + record["typeParams"] + record["valueParams"] + ": " + record["resultType"]
-    except KeyError: return ""
+    try: return 'def ' + record['name'] + record['typeParams'] + record['valueParams'] + ': ' + record['resultType']
+    except KeyError: return ''
 
   def __parsePackage(self, record):
-    try: return record["parent"]["qualifiedName"]
-    except KeyError: return ""
+    try: return record['parent']['qualifiedName']
+    except KeyError: return ''

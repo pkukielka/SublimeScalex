@@ -1,5 +1,6 @@
 {
   "scalex_api_url": "http://api.scalex.org/",
+  "scaladoc_url": "http://www.scala-lang.org/api/2.9.1-1/",
   "scalex_api_timeout": 2,
   "results_limit": 20
 }
