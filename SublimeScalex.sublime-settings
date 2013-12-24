@@ -1,0 +1,5 @@
+{
+  "scalex_api_url": "http://api.scalex.org/",
+  "scalex_api_timeout": 2,
+  "results_limit": 20
+}

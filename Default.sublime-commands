@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "SublimeScalex: search Scala documentation",
+        "command": "sublime_scalex"
+    }
+]
