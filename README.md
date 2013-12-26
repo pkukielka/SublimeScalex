@@ -31,7 +31,7 @@ You can reduce the search scope to one or more packages:
 Right now SublimeScalex works only under ST3 (or at least was not tested under ST2 yet).
 If there will be enough interest I'll port it to older version as well.
 
-The easiest way to install SublimeScalex is to use [Package Control](http://wbond.net/sublime_packages/package_control).
+The easiest way to install SublimeScalex is to use [Package Control](https://sublime.wbond.net/packages/Scalex%20Documentation%20Search).
 You can also install it from here, by downloading and copying this folder to your packages directory.
 
 ## Usage
