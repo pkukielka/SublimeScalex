@@ -1,5 +1,6 @@
 import sublime, sublime_plugin
 import urllib.request, urllib.error
+import os.path
 import webbrowser
 import threading
 import json
@@ -13,10 +14,18 @@ class SublimeScalexCommand(sublime_plugin.WindowCommand):
       self.__queryScalex,
       None,
       None)
-    view.set_syntax_file('Packages/SublimeScalex/SublimeScalex.hidden-tmLanguage')
+    view.set_syntax_file(os.path.join(self.__getPackageDir(), 'SublimeScalex.hidden-tmLanguage'))
     view.settings().set('is_widget', True)
     view.settings().set('gutter', False)
     view.settings().set('rulers', [])
+
+  def __getPackageDir(self):
+      if os.path.exists(os.path.join(sublime.packages_path(), 'SublimeScalex')):
+          return os.path.join('Packages', 'SublimeScalex')
+      if os.path.exists(os.path.join(sublime.packages_path(), 'Scalex Documentation Search')):
+          return os.path.join('Packages', 'Scalex Documentation Search')
+
+      raise Exception('Cannot find package dir')
 
   def __queryScalex(self, query_string):
     SublimeScalexHistory.add(query_string)
