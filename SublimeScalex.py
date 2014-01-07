@@ -14,18 +14,18 @@ class SublimeScalexCommand(sublime_plugin.WindowCommand):
       self.__queryScalex,
       None,
       None)
-    view.set_syntax_file(os.path.join(self.__getPackageDir(), 'SublimeScalex.hidden-tmLanguage'))
+    self.__setSyntax(view, 'SublimeScalex.hidden-tmLanguage')
     view.settings().set('is_widget', True)
     view.settings().set('gutter', False)
     view.settings().set('rulers', [])
 
-  def __getPackageDir(self):
-      if os.path.exists(os.path.join(sublime.packages_path(), 'SublimeScalex')):
-          return os.path.join('Packages', 'SublimeScalex')
-      if os.path.exists(os.path.join(sublime.packages_path(), 'Scalex Documentation Search')):
-          return os.path.join('Packages', 'Scalex Documentation Search')
+  def __setSyntax(self, view, file_name):
+    path = lambda package_name: 'Packages{0}{1}{0}{2}'.format(os.sep, package_name, file_name)
 
-      raise Exception('Cannot find package dir')
+    if os.path.isfile(os.path.join(sublime.packages_path(), "SublimeScalex")):
+      view.set_syntax_file(path('SublimeScalex'))
+    else:
+      view.set_syntax_file(path('Scalex Documentation Search'))
 
   def __queryScalex(self, query_string):
     SublimeScalexHistory.add(query_string)
